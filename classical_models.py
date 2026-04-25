@@ -27,7 +27,7 @@ from sklearn.metrics import (
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
-
+import joblib
 # ---------------------------------------------------------------------------
 # Constants — columns available in data/clean_data.csv
 # ---------------------------------------------------------------------------
@@ -97,6 +97,7 @@ def build_preprocessor() -> ColumnTransformer:
 # ---------------------------------------------------------------------------
 
 def build_logistic_regression() -> Pipeline:
+
     """Logistic Regression pipeline with class-weight balancing."""
     return Pipeline(
         [
@@ -180,14 +181,22 @@ def build_xgboost() -> Pipeline:
 # Convenience accessors
 # ---------------------------------------------------------------------------
 
-def get_all_models() -> dict:
+def get_all_models(load_saved=False) -> dict:
     """Return a dict of model-name → Pipeline for all 4 classical models."""
-    return {
-        "logistic_regression": build_logistic_regression(),
-        "decision_tree": build_decision_tree(),
-        "random_forest": build_random_forest(),
-        "xgboost": build_xgboost(),
-    }
+    if load_saved:
+        return {
+            "logistic_regression": joblib.load("saved_models/logistic_regression.joblib"),
+            "decision_tree": joblib.load("saved_models/decision_tree.joblib"),
+            "random_forest": joblib.load("saved_models/random_forest.joblib"),
+            "xgboost": joblib.load("saved_models/xgboost.joblib"),
+        }
+    else:
+        return {
+            "logistic_regression": build_logistic_regression(),
+            "decision_tree": build_decision_tree(),
+            "random_forest": build_random_forest(),
+            "xgboost": build_xgboost(),
+        }
 
 
 # ---------------------------------------------------------------------------
