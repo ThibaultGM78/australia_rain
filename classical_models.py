@@ -13,6 +13,8 @@ Usage:
 
 import numpy as np
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -189,6 +191,7 @@ def get_all_models(load_saved=False) -> dict:
             "decision_tree": joblib.load("saved_models/decision_tree.joblib"),
             "random_forest": joblib.load("saved_models/random_forest.joblib"),
             "xgboost": joblib.load("saved_models/xgboost.joblib"),
+            "temp_regressor": joblib.load("saved_models/temp_regressor.joblib"),
         }
     else:
         return {
@@ -226,4 +229,36 @@ def evaluate_model(model: Pipeline, X_test, y_test) -> dict:
         "precision": float(precision_score(y_test, y_pred)),
         "recall": float(recall_score(y_test, y_pred)),
         "confusion_matrix": confusion_matrix(y_test, y_pred).tolist(),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Temperature Regressor
+# ---------------------------------------------------------------------------
+
+def build_temp_regressor() -> Pipeline:
+    """Random Forest regressor for MaxTemp prediction."""
+    return Pipeline(
+        [
+            ("preprocessor", build_preprocessor()),
+            (
+                "regressor",
+                GradientBoostingRegressor(
+                    n_estimators=200,
+                    max_depth=5,
+                    learning_rate=0.05,
+                    subsample=0.8,
+                    random_state=42,
+                ),
+            ),
+        ]
+    )
+
+
+def evaluate_regressor(model: Pipeline, X_test, y_test) -> dict:
+    """MAE and R² for a fitted regressor pipeline."""
+    y_pred = model.predict(X_test)
+    return {
+        "mae": float(mean_absolute_error(y_test, y_pred)),
+        "r2":  float(r2_score(y_test, y_pred)),
     }
