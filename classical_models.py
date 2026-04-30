@@ -88,13 +88,23 @@ _SCALE_POS_WEIGHT = 3.5
 # Preprocessor
 # ---------------------------------------------------------------------------
 
-def build_preprocessor() -> ColumnTransformer:
+def build_preprocessor(exclude=None) -> ColumnTransformer:
     """Return a ColumnTransformer that scales numeric features and passes
-    through already-encoded features."""
+    through already-encoded features.
+
+    Parameters
+    ----------
+    exclude : list[str] or None
+        Column names to exclude from the preprocessor (e.g. ["MaxTemp"]
+        when predicting MaxTemp to avoid data leakage).
+    """
+    exclude = set(exclude or [])
+    num_cols = [c for c in _NUMERIC_COLUMNS if c not in exclude]
+    pass_cols = [c for c in _PASSTHROUGH_COLUMNS if c not in exclude]
     return ColumnTransformer(
         transformers=[
-            ("numeric", StandardScaler(), _NUMERIC_COLUMNS),
-            ("passthrough", "passthrough", _PASSTHROUGH_COLUMNS),
+            ("numeric", StandardScaler(), num_cols),
+            ("passthrough", "passthrough", pass_cols),
         ],
         remainder="drop",
     )
@@ -243,10 +253,14 @@ def evaluate_model(model: Pipeline, X_test, y_test) -> dict:
 # ---------------------------------------------------------------------------
 
 def build_temp_regressor() -> Pipeline:
-    """Random Forest regressor for MaxTemp prediction."""
+    """GradientBoosting regressor for MaxTemp prediction.
+
+    Uses a preprocessor that *excludes* MaxTemp to avoid data leakage
+    (MaxTemp is the prediction target).
+    """
     return Pipeline(
         [
-            ("preprocessor", build_preprocessor()),
+            ("preprocessor", build_preprocessor(exclude=["MaxTemp"])),
             (
                 "regressor",
                 GradientBoostingRegressor(
