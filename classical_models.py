@@ -54,13 +54,13 @@ FEATURE_COLUMNS = [
     "Temp9am",
     "Temp3pm",
     "TempRange",
-    "Humidity_Avg",
-    "Pressure_Diff",
+    "HumidityMean",
+    "PressureChange",
     "Month_sin",
     "Month_cos",
     "WindDir3pm_sin",
     "WindDir3pm_cos",
-    "RainToday",
+    "RainToday_bin",
     "Location_rainrate",
 ]
 
@@ -73,7 +73,8 @@ _PASSTHROUGH_COLUMNS = [
     "Month_cos",
     "WindDir3pm_sin",
     "WindDir3pm_cos",
-    "RainToday",
+    "RainToday_bin",
+    "Location_rainrate",
 ]
 
 # Numeric columns that need standardisation

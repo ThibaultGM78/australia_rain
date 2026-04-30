@@ -40,7 +40,7 @@ from xgboost import XGBClassifier
 import optuna
 from optuna.samplers import TPESampler
 
-from classical_models.classical_models import build_preprocessor, FEATURE_COLUMNS, TARGET_RAIN
+from classical_models import build_preprocessor, FEATURE_COLUMNS, TARGET_RAIN
 
 
 # ---------------------------------------------------------------------------
