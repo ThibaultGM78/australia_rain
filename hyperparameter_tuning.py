@@ -157,7 +157,7 @@ def run_grid_search(pipeline, param_grid, X_train, y_train,
 
 
 def run_random_search(pipeline, param_distributions, X_train, y_train,
-                      n_iter=50, cv=None, scoring="roc_auc", n_jobs=-1):
+                      n_iter=10, cv=None, scoring="roc_auc", n_jobs=-1):
     """Run RandomizedSearchCV and return the fitted searcher.
 
     Parameters
@@ -263,7 +263,7 @@ def build_optuna_objective(model_name, X_train, y_train, cv=None):
 
 
 def run_optuna_study(model_name, X_train, y_train,
-                     n_trials=50, cv=None, direction="maximize"):
+                     n_trials=10, cv=None, direction="maximize"):
     """Create and run an Optuna study for the given model.
 
     Returns
