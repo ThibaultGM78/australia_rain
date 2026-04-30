@@ -21,7 +21,7 @@ from datetime import datetime
 # Logger setup
 # ---------------------------------------------------------------------------
 
-def setup_logger(name="training", log_dir="logs"):
+def setup_logger(name="training", log_dir="logs", level="INFO"):
     """Configure and return a logger that writes to both console and file.
 
     Parameters
@@ -30,6 +30,11 @@ def setup_logger(name="training", log_dir="logs"):
         Logger name (also used for the log filename)
     log_dir : str
         Directory for log files (created if it doesn't exist)
+    level : str or int
+        Logging level for the console handler.
+        Accepts standard level names: "DEBUG", "INFO", "WARNING", "ERROR"
+        or their integer equivalents. The file handler always logs DEBUG.
+        Default: "INFO"
 
     Returns
     -------
@@ -42,9 +47,19 @@ def setup_logger(name="training", log_dir="logs"):
 
     # Avoid duplicate handlers on repeated calls
     if logger.handlers:
+        # If logger already exists, update the console handler level in case
+        # the caller changed it (e.g. re-running with a different --log-level)
+        numeric_level = _parse_level(level)
+        for handler in logger.handlers:
+            if isinstance(handler, logging.StreamHandler) and not isinstance(
+                handler, logging.FileHandler
+            ):
+                handler.setLevel(numeric_level)
         return logger
 
-    # File handler — detailed logs
+    numeric_level = _parse_level(level)
+
+    # File handler — always DEBUG so every detail is captured on disk
     fh = logging.FileHandler(
         os.path.join(log_dir, f"{name}.log"),
         mode="a",
@@ -57,9 +72,9 @@ def setup_logger(name="training", log_dir="logs"):
     )
     fh.setFormatter(file_fmt)
 
-    # Console handler — concise
+    # Console handler — level controlled by caller
     ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
+    ch.setLevel(numeric_level)
     console_fmt = logging.Formatter(
         "%(asctime)s | %(levelname)s | %(message)s",
         datefmt="%H:%M:%S",
@@ -70,6 +85,29 @@ def setup_logger(name="training", log_dir="logs"):
     logger.addHandler(ch)
 
     return logger
+
+
+def _parse_level(level):
+    """Convert a level name string or int to a logging int constant.
+
+    Parameters
+    ----------
+    level : str or int
+        e.g. "DEBUG", "INFO", "WARNING", "ERROR", or 10, 20, 30, 40
+
+    Returns
+    -------
+    int
+    """
+    if isinstance(level, int):
+        return level
+    numeric = getattr(logging, level.upper(), None)
+    if numeric is None:
+        raise ValueError(
+            f"Invalid log level: {level!r}. "
+            "Choose from DEBUG, INFO, WARNING, ERROR."
+        )
+    return numeric
 
 
 # ---------------------------------------------------------------------------
@@ -123,7 +161,6 @@ def log_training_metrics(logger, model_name, metrics_dict, phase="training",
         else:
             logger.info(f"  {key}: {value}")
 
-    # Build flat CSV row
     row = {
         "timestamp": _timestamp(),
         "phase": phase,
@@ -131,7 +168,7 @@ def log_training_metrics(logger, model_name, metrics_dict, phase="training",
     }
     for key, value in metrics_dict.items():
         if key == "confusion_matrix":
-            row[key] = str(value)  # Store as string representation
+            row[key] = str(value)
         else:
             row[key] = value
 
