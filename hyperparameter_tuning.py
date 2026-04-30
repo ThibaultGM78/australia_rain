@@ -19,6 +19,7 @@ Usage:
 """
 
 import numpy as np
+from tqdm.auto import tqdm
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -147,9 +148,11 @@ def run_grid_search(pipeline, param_grid, X_train, y_train,
         n_jobs=n_jobs,
         refit=True,
         return_train_score=True,
-        verbose=1,
+        verbose=2,
     )
+    print(f"  ⏳ GridSearchCV fitting ({len(gs.get_params()['param_grid'] or param_grid)} param combos × {cv.get_n_splits()} folds)...")
     gs.fit(X_train, y_train)
+    print(f"  ✅ GridSearchCV done — best score: {gs.best_score_:.4f}")
     return gs
 
 
@@ -176,9 +179,11 @@ def run_random_search(pipeline, param_distributions, X_train, y_train,
         refit=True,
         return_train_score=True,
         random_state=42,
-        verbose=1,
+        verbose=2,
     )
+    print(f"  ⏳ RandomizedSearchCV fitting ({n_iter} iterations × {cv.get_n_splits()} folds)...")
     rs.fit(X_train, y_train)
+    print(f"  ✅ RandomizedSearchCV done — best score: {rs.best_score_:.4f}")
     return rs
 
 
@@ -357,6 +362,7 @@ def plot_learning_curves(pipeline, X_train, y_train, cv=None,
     if cv is None:
         cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
+    print(f"  ⏳ Computing learning curve (10 train sizes × {cv.get_n_splits()} folds)...")
     train_sizes, train_scores, val_scores = learning_curve(
         pipeline, X_train, y_train,
         cv=cv,
@@ -364,7 +370,9 @@ def plot_learning_curves(pipeline, X_train, y_train, cv=None,
         n_jobs=n_jobs,
         train_sizes=np.linspace(0.1, 1.0, 10),
         random_state=42,
+        verbose=1,
     )
+    print("  ✅ Learning curve computed.")
 
     train_mean = train_scores.mean(axis=1)
     train_std = train_scores.std(axis=1)
