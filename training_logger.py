@@ -6,6 +6,9 @@ Provides utilities for:
 - Python logging with file + console output
 - Persisting training metrics to CSV files in logs/
 - Logging cross-validation results, tuning results, calibration results
+- **Separate** classification vs regression metric logging
+- Train-vs-validation gap logging
+- CSV deduplication for clean outputs
 
 Usage:
     from training_logger import setup_logger, log_training_metrics, log_cv_results
@@ -15,6 +18,8 @@ import csv
 import logging
 import os
 from datetime import datetime
+
+import numpy as np
 
 
 # ---------------------------------------------------------------------------
@@ -137,22 +142,22 @@ def _append_row_to_csv(filepath, row_dict):
 
 
 # ---------------------------------------------------------------------------
-# Training metrics logging
+# Classification metrics logging
 # ---------------------------------------------------------------------------
 
 def log_training_metrics(logger, model_name, metrics_dict, phase="training",
                          log_dir="logs"):
-    """Log training/evaluation metrics and persist to CSV.
+    """Log classification training/evaluation metrics and persist to CSV.
 
     Parameters
     ----------
     logger : logging.Logger
     model_name : str
-    metrics_dict : dict — e.g. {"accuracy": 0.85, "roc_auc": 0.87, ...}
+    metrics_dict : dict — e.g. {"accuracy": 0.85, "roc_auc": 0.87, "mcc": 0.55, ...}
     phase : str — "training", "evaluation", "test", etc.
     log_dir : str
     """
-    logger.info(f"[{phase.upper()}] {model_name} metrics:")
+    logger.info(f"[{phase.upper()}] {model_name} (classification) metrics:")
     for key, value in metrics_dict.items():
         if key == "confusion_matrix":
             logger.info(f"  {key}: {value}")
@@ -164,6 +169,7 @@ def log_training_metrics(logger, model_name, metrics_dict, phase="training",
     row = {
         "timestamp": _timestamp(),
         "phase": phase,
+        "model_type": "classification",
         "model": model_name,
     }
     for key, value in metrics_dict.items():
@@ -176,11 +182,49 @@ def log_training_metrics(logger, model_name, metrics_dict, phase="training",
 
 
 # ---------------------------------------------------------------------------
+# Regression metrics logging (separate from classification!)
+# ---------------------------------------------------------------------------
+
+def log_regression_metrics(logger, model_name, metrics_dict, phase="evaluation",
+                           log_dir="logs"):
+    """Log regression metrics and persist to a **separate** CSV.
+
+    This prevents R² from being mixed up with roc_auc in the same file.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+    model_name : str
+    metrics_dict : dict — e.g. {"mae": 0.44, "rmse": 0.65, "r2": 0.99}
+    phase : str
+    log_dir : str
+    """
+    logger.info(f"[{phase.upper()}] {model_name} (regression) metrics:")
+    for key, value in metrics_dict.items():
+        if isinstance(value, float):
+            logger.info(f"  {key}: {value:.4f}")
+        else:
+            logger.info(f"  {key}: {value}")
+
+    row = {
+        "timestamp": _timestamp(),
+        "phase": phase,
+        "model_type": "regression",
+        "model": model_name,
+    }
+    row.update(metrics_dict)
+
+    _append_row_to_csv(_csv_path(log_dir, "regression_metrics.csv"), row)
+
+
+# ---------------------------------------------------------------------------
 # Cross-validation results logging
 # ---------------------------------------------------------------------------
 
 def log_cv_results(logger, model_name, cv_scores, log_dir="logs"):
     """Log cross-validation results and persist to CSV.
+
+    Now also logs **train scores** when available for overfitting monitoring.
 
     Parameters
     ----------
@@ -204,9 +248,68 @@ def log_cv_results(logger, model_name, cv_scores, log_dir="logs"):
             std_val = float(cv_scores[key].std())
             row[f"{metric_name}_mean"] = round(mean_val, 6)
             row[f"{metric_name}_std"] = round(std_val, 6)
-            logger.info(f"  {metric_name}: {mean_val:.4f} ± {std_val:.4f}")
+            logger.info(f"  val_{metric_name}: {mean_val:.4f} ± {std_val:.4f}")
+
+    # Also log train scores if available (for overfitting monitoring)
+    for key in cv_scores:
+        if key.startswith("train_"):
+            metric_name = key.replace("train_", "")
+            mean_val = float(cv_scores[key].mean())
+            std_val = float(cv_scores[key].std())
+            row[f"train_{metric_name}_mean"] = round(mean_val, 6)
+            row[f"train_{metric_name}_std"] = round(std_val, 6)
+            logger.info(f"  train_{metric_name}: {mean_val:.4f} ± {std_val:.4f}")
+
+            # Compute gap
+            val_mean_key = f"{metric_name}_mean"
+            if val_mean_key in row:
+                gap = mean_val - row[val_mean_key]
+                row[f"{metric_name}_gap"] = round(gap, 6)
+                risk = "HIGH" if gap > 0.05 else "MODERATE" if gap > 0.02 else "LOW"
+                logger.info(f"  {metric_name} gap (train-val): {gap:.4f} → overfit risk: {risk}")
 
     _append_row_to_csv(_csv_path(log_dir, "cv_results.csv"), row)
+
+
+# ---------------------------------------------------------------------------
+# Train vs Validation comparison logging
+# ---------------------------------------------------------------------------
+
+def log_train_val_comparison(logger, model_name, train_scores, val_scores,
+                              metric_name="roc_auc", log_dir="logs"):
+    """Log train vs validation score comparison for overfitting monitoring.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+    model_name : str
+    train_scores : array-like — scores from training folds
+    val_scores : array-like — scores from validation folds
+    metric_name : str
+    log_dir : str
+    """
+    train_mean = float(np.mean(train_scores))
+    val_mean = float(np.mean(val_scores))
+    gap = train_mean - val_mean
+
+    risk = "HIGH" if gap > 0.05 else "MODERATE" if gap > 0.02 else "LOW"
+
+    logger.info(f"[OVERFIT CHECK] {model_name}:")
+    logger.info(f"  Train {metric_name}: {train_mean:.4f}")
+    logger.info(f"  Val   {metric_name}: {val_mean:.4f}")
+    logger.info(f"  Gap: {gap:.4f} → risk: {risk}")
+
+    row = {
+        "timestamp": _timestamp(),
+        "phase": "overfit_check",
+        "model": model_name,
+        "metric": metric_name,
+        "train_score": round(train_mean, 6),
+        "val_score": round(val_mean, 6),
+        "gap": round(gap, 6),
+        "risk": risk,
+    }
+    _append_row_to_csv(_csv_path(log_dir, "train_val_comparison.csv"), row)
 
 
 # ---------------------------------------------------------------------------
@@ -295,4 +398,57 @@ def log_model_save(logger, model_name, path, log_dir="logs"):
         "model": model_name,
         "path": path,
     }
-    _append_row_to_csv(_csv_path(log_dir, "training_metrics.csv"), row)
+    # Save to its own CSV instead of mixing with training metrics
+    _append_row_to_csv(_csv_path(log_dir, "model_saves.csv"), row)
+
+
+# ---------------------------------------------------------------------------
+# CSV deduplication
+# ---------------------------------------------------------------------------
+
+def clean_csv_duplicates(filepath, key_columns=None):
+    """Deduplicate a CSV file, keeping the latest entry per key.
+
+    Parameters
+    ----------
+    filepath : str
+        Path to the CSV file.
+    key_columns : list[str] or None
+        Columns that define a unique row. If None, defaults to
+        ["model", "phase"].
+    """
+    import pandas as pd
+
+    if not os.path.exists(filepath):
+        return
+
+    try:
+        df = pd.read_csv(filepath, on_bad_lines="skip")
+    except Exception:
+        # If the CSV is too corrupt to read, skip it
+        return
+
+    if df.empty:
+        return
+
+    if key_columns is None:
+        key_columns = [c for c in ["model", "phase"] if c in df.columns]
+
+    if not key_columns:
+        return
+
+    before = len(df)
+    df = df.drop_duplicates(subset=key_columns, keep="last")
+    after = len(df)
+
+    if before != after:
+        df.to_csv(filepath, index=False)
+        print(f"  Cleaned {filepath}: {before} → {after} rows (removed {before - after} duplicates)")
+
+
+def clean_all_csvs(log_dir="logs"):
+    """Clean all CSV files in the log directory."""
+    import glob
+
+    for path in glob.glob(os.path.join(log_dir, "*.csv")):
+        clean_csv_duplicates(path)
