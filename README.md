@@ -10,6 +10,16 @@ Ce projet vise à analyser les données météorologiques australiennes et à en
 - scripts & classical_models.py  Définition des architectures et fonctions utilitaires.
 - exploration_dl  Dossier dédié aux tests sur le Deep Learning.
 - results & logs  Sorties des entraînements et suivis de performance via training_logger.py.
+australia_rain/
+├── app.py                   # ← l'app Streamlit
+├── australian_locations.py  # ← coordonnées + climats typiques des stations
+├── whatif_analysis.py       # ← TON fichier existant (helpers du modèle)
+├── requirements.txt
+└── saved_models/
+    └── xgboost.joblib
+    └── xxxx.joblib
+        
+
 
 ## Utilisation
 
