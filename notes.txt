@@ -1,3 +1,0 @@
-# étape 1
-Faire un état d'art sur les modèles qui sont déjà faits.
-#étpae 2 : Voir si on peut utiliser les modèles déjà faits en modifiant des paramètres ou en hybridant des modèles.

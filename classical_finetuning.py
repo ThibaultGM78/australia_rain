@@ -258,7 +258,7 @@ def main(args=None):
         out_path = os.path.join(cfg.artifacts_dir, "learning_curves.png")
         plt.savefig(out_path, dpi=150, bbox_inches="tight")
         plt.show()
-        print(f"✅ Learning curves saved → {out_path}\n")
+        print(f"Learning curves saved → {out_path}\n")
 
     # ── Tuning ───────────────────────────────────────────────────────────────
     grid_results   = {}   # name → GridSearchCV
@@ -281,7 +281,7 @@ def main(args=None):
             print(f"  Best {cfg.scoring}: {gs.best_score_:.4f}")
             print(f"  Best params : {gs.best_params_}")
             log_tuning_results(logger, name, "grid_search", gs.best_params_, gs.best_score_)
-        print("✅ GridSearchCV complete.\n")
+        print("GridSearchCV complete.\n")
 
     # Randomized Search ───────────────────────────────────────────────────────
     if "random_search" in cfg.methods:
@@ -301,7 +301,7 @@ def main(args=None):
             print(f"  Best {cfg.scoring}: {rs.best_score_:.4f}")
             print(f"  Best params : {rs.best_params_}")
             log_tuning_results(logger, name, "random_search", rs.best_params_, rs.best_score_)
-        print("✅ RandomizedSearchCV complete.\n")
+        print("RandomizedSearchCV complete.\n")
 
     # Optuna ──────────────────────────────────────────────────────────────────
     if "optuna" in cfg.methods:
@@ -317,7 +317,7 @@ def main(args=None):
             print(f"  Best {cfg.scoring}: {study.best_value:.4f}")
             print(f"  Best params : {study.best_params}")
             log_tuning_results(logger, name, "optuna", study.best_params, study.best_value)
-        print("✅ Optuna complete.\n")
+        print("Optuna complete.\n")
 
     # ── Comparison table ─────────────────────────────────────────────────────
     if len(cfg.methods) > 1:
@@ -375,9 +375,9 @@ def main(args=None):
             out_path = os.path.join(cfg.artifacts_dir, "calibration_curves.png")
             plt.savefig(out_path, dpi=150, bbox_inches="tight")
             plt.show()
-            print(f"✅ Calibration curves saved → {out_path}\n")
+            print(f"Calibration curves saved → {out_path}\n")
     elif not grid_results:
-        print("⚠️  Skipping calibration — requires grid_search to be included in --method.\n")
+        print(" Skipping calibration — requires grid_search to be included in --method.\n")
 
     # ── Save best models ──────────────────────────────────────────────────────
     if not cfg.no_save and grid_results:
@@ -390,7 +390,7 @@ def main(args=None):
             joblib.dump(best_model, model_path)
             print(f"  Saved {name} → {model_path}")
             log_model_save(logger, f"{name}_tuned", model_path)
-        print("✅ All tuned models saved.\n")
+        print("All tuned models saved.\n")
 
     logger.info("=== Fine-Tuning Session Complete ===")
     print("🎉 Fine-tuning session complete.")

@@ -1,0 +1,182 @@
+2026-05-04 15:46:58 | classical_training | INFO | === Classical Training Session Started ===
+2026-05-04 15:46:59 | classical_training | INFO | Data loaded: 142193 rows, 21 features, rain=22.42%
+2026-05-04 15:46:59 | classical_training | INFO | Train/test split: train=(113754, 21), test=(28439, 21)
+2026-05-04 15:46:59 | classical_training | INFO | Model instantiated: logistic_regression (LogisticRegression)
+2026-05-04 15:46:59 | classical_training | INFO | Model instantiated: decision_tree (DecisionTreeClassifier)
+2026-05-04 15:46:59 | classical_training | INFO | Model instantiated: random_forest (RandomForestClassifier)
+2026-05-04 15:46:59 | classical_training | INFO | Model instantiated: xgboost (XGBClassifier)
+2026-05-04 15:47:45 | classical_training | INFO | Training logistic_regression...
+2026-05-04 15:47:45 | classical_training | INFO | [EVALUATION] logistic_regression metrics:
+2026-05-04 15:47:45 | classical_training | INFO |   accuracy: 0.7855
+2026-05-04 15:47:45 | classical_training | INFO |   roc_auc: 0.8588
+2026-05-04 15:47:45 | classical_training | INFO |   f1_score: 0.6123
+2026-05-04 15:47:45 | classical_training | INFO |   precision: 0.5147
+2026-05-04 15:47:45 | classical_training | INFO |   recall: 0.7556
+2026-05-04 15:47:45 | classical_training | INFO |   confusion_matrix: [[17522, 4542], [1558, 4817]]
+2026-05-04 15:47:45 | classical_training | INFO | [SAVE] logistic_regression → saved_models/logistic_regression.joblib
+2026-05-04 15:47:45 | classical_training | INFO | Training decision_tree...
+2026-05-04 15:47:46 | classical_training | INFO | [EVALUATION] decision_tree metrics:
+2026-05-04 15:47:46 | classical_training | INFO |   accuracy: 0.7938
+2026-05-04 15:47:46 | classical_training | INFO |   roc_auc: 0.8526
+2026-05-04 15:47:46 | classical_training | INFO |   f1_score: 0.6132
+2026-05-04 15:47:46 | classical_training | INFO |   precision: 0.5291
+2026-05-04 15:47:46 | classical_training | INFO |   recall: 0.7291
+2026-05-04 15:47:46 | classical_training | INFO |   confusion_matrix: [[17928, 4136], [1727, 4648]]
+2026-05-04 15:47:46 | classical_training | INFO | [SAVE] decision_tree → saved_models/decision_tree.joblib
+2026-05-04 15:47:46 | classical_training | INFO | Training random_forest...
+2026-05-04 15:47:51 | classical_training | INFO | [EVALUATION] random_forest metrics:
+2026-05-04 15:47:51 | classical_training | INFO |   accuracy: 0.8232
+2026-05-04 15:47:51 | classical_training | INFO |   roc_auc: 0.8816
+2026-05-04 15:47:51 | classical_training | INFO |   f1_score: 0.6509
+2026-05-04 15:47:51 | classical_training | INFO |   precision: 0.5840
+2026-05-04 15:47:51 | classical_training | INFO |   recall: 0.7352
+2026-05-04 15:47:51 | classical_training | INFO |   confusion_matrix: [[18725, 3339], [1688, 4687]]
+2026-05-04 15:47:51 | classical_training | INFO | [SAVE] random_forest → saved_models/random_forest.joblib
+2026-05-04 15:47:51 | classical_training | INFO | Training xgboost...
+2026-05-04 15:47:52 | classical_training | INFO | [EVALUATION] xgboost metrics:
+2026-05-04 15:47:52 | classical_training | INFO |   accuracy: 0.8174
+2026-05-04 15:47:52 | classical_training | INFO |   roc_auc: 0.8893
+2026-05-04 15:47:52 | classical_training | INFO |   f1_score: 0.6569
+2026-05-04 15:47:52 | classical_training | INFO |   precision: 0.5674
+2026-05-04 15:47:52 | classical_training | INFO |   recall: 0.7799
+2026-05-04 15:47:52 | classical_training | INFO |   confusion_matrix: [[18273, 3791], [1403, 4972]]
+2026-05-04 15:47:52 | classical_training | INFO | [SAVE] xgboost → saved_models/xgboost.joblib
+2026-05-04 15:49:22 | classical_training | INFO | [CV] logistic_regression cross-validation results:
+2026-05-04 15:49:22 | classical_training | INFO |   roc_auc: 0.8543 ± 0.0041
+2026-05-04 15:49:22 | classical_training | INFO |   f1: 0.6063 ± 0.0053
+2026-05-04 15:49:22 | classical_training | INFO |   accuracy: 0.7804 ± 0.0028
+2026-05-04 15:49:22 | classical_training | INFO |   precision: 0.5068 ± 0.0042
+2026-05-04 15:49:22 | classical_training | INFO |   recall: 0.7544 ± 0.0078
+2026-05-04 15:49:25 | classical_training | INFO | [CV] decision_tree cross-validation results:
+2026-05-04 15:49:25 | classical_training | INFO |   roc_auc: 0.8479 ± 0.0039
+2026-05-04 15:49:25 | classical_training | INFO |   f1: 0.6036 ± 0.0043
+2026-05-04 15:49:25 | classical_training | INFO |   accuracy: 0.7829 ± 0.0045
+2026-05-04 15:49:25 | classical_training | INFO |   precision: 0.5110 ± 0.0071
+2026-05-04 15:49:25 | classical_training | INFO |   recall: 0.7372 ± 0.0062
+2026-05-04 15:49:47 | classical_training | INFO | [CV] random_forest cross-validation results:
+2026-05-04 15:49:47 | classical_training | INFO |   roc_auc: 0.8764 ± 0.0033
+2026-05-04 15:49:47 | classical_training | INFO |   f1: 0.6419 ± 0.0036
+2026-05-04 15:49:47 | classical_training | INFO |   accuracy: 0.8169 ± 0.0023
+2026-05-04 15:49:47 | classical_training | INFO |   precision: 0.5715 ± 0.0044
+2026-05-04 15:49:47 | classical_training | INFO |   recall: 0.7321 ± 0.0045
+2026-05-04 15:49:51 | classical_training | INFO | [CV] xgboost cross-validation results:
+2026-05-04 15:49:51 | classical_training | INFO |   roc_auc: 0.8849 ± 0.0028
+2026-05-04 15:49:51 | classical_training | INFO |   f1: 0.6504 ± 0.0026
+2026-05-04 15:49:51 | classical_training | INFO |   accuracy: 0.8132 ± 0.0015
+2026-05-04 15:49:51 | classical_training | INFO |   precision: 0.5603 ± 0.0026
+2026-05-04 15:49:51 | classical_training | INFO |   recall: 0.7749 ± 0.0050
+2026-05-04 15:49:51 | classical_training | INFO | Training logistic_regression...
+2026-05-04 15:49:52 | classical_training | INFO | [EVALUATION] logistic_regression metrics:
+2026-05-04 15:49:52 | classical_training | INFO |   accuracy: 0.7855
+2026-05-04 15:49:52 | classical_training | INFO |   roc_auc: 0.8588
+2026-05-04 15:49:52 | classical_training | INFO |   f1_score: 0.6123
+2026-05-04 15:49:52 | classical_training | INFO |   precision: 0.5147
+2026-05-04 15:49:52 | classical_training | INFO |   recall: 0.7556
+2026-05-04 15:49:52 | classical_training | INFO |   confusion_matrix: [[17522, 4542], [1558, 4817]]
+2026-05-04 15:49:52 | classical_training | INFO | [SAVE] logistic_regression → saved_models/logistic_regression.joblib
+2026-05-04 15:49:52 | classical_training | INFO | Training decision_tree...
+2026-05-04 15:49:52 | classical_training | INFO | [EVALUATION] decision_tree metrics:
+2026-05-04 15:49:52 | classical_training | INFO |   accuracy: 0.7938
+2026-05-04 15:49:52 | classical_training | INFO |   roc_auc: 0.8526
+2026-05-04 15:49:52 | classical_training | INFO |   f1_score: 0.6132
+2026-05-04 15:49:52 | classical_training | INFO |   precision: 0.5291
+2026-05-04 15:49:52 | classical_training | INFO |   recall: 0.7291
+2026-05-04 15:49:52 | classical_training | INFO |   confusion_matrix: [[17928, 4136], [1727, 4648]]
+2026-05-04 15:49:52 | classical_training | INFO | [SAVE] decision_tree → saved_models/decision_tree.joblib
+2026-05-04 15:49:52 | classical_training | INFO | Training random_forest...
+2026-05-04 15:49:57 | classical_training | INFO | [EVALUATION] random_forest metrics:
+2026-05-04 15:49:57 | classical_training | INFO |   accuracy: 0.8232
+2026-05-04 15:49:57 | classical_training | INFO |   roc_auc: 0.8816
+2026-05-04 15:49:57 | classical_training | INFO |   f1_score: 0.6509
+2026-05-04 15:49:57 | classical_training | INFO |   precision: 0.5840
+2026-05-04 15:49:57 | classical_training | INFO |   recall: 0.7352
+2026-05-04 15:49:57 | classical_training | INFO |   confusion_matrix: [[18725, 3339], [1688, 4687]]
+2026-05-04 15:49:57 | classical_training | INFO | [SAVE] random_forest → saved_models/random_forest.joblib
+2026-05-04 15:49:57 | classical_training | INFO | Training xgboost...
+2026-05-04 15:49:58 | classical_training | INFO | [EVALUATION] xgboost metrics:
+2026-05-04 15:49:58 | classical_training | INFO |   accuracy: 0.8174
+2026-05-04 15:49:58 | classical_training | INFO |   roc_auc: 0.8893
+2026-05-04 15:49:58 | classical_training | INFO |   f1_score: 0.6569
+2026-05-04 15:49:58 | classical_training | INFO |   precision: 0.5674
+2026-05-04 15:49:58 | classical_training | INFO |   recall: 0.7799
+2026-05-04 15:49:58 | classical_training | INFO |   confusion_matrix: [[18273, 3791], [1403, 4972]]
+2026-05-04 15:49:58 | classical_training | INFO | [SAVE] xgboost → saved_models/xgboost.joblib
+2026-05-04 15:50:44 | classical_training | INFO | Temp regressor data: train=(113754, 20), test=(28439, 20)
+2026-05-04 15:50:45 | classical_training | INFO | Fitting temperature regressor...
+2026-05-04 15:51:33 | classical_training | INFO | [EVALUATION] temp_regressor metrics:
+2026-05-04 15:51:33 | classical_training | INFO |   mae: 0.4420
+2026-05-04 15:51:33 | classical_training | INFO |   r2: 0.9925
+2026-05-04 15:51:33 | classical_training | INFO | [SAVE] temp_regressor → saved_models/temp_regressor.joblib
+2026-05-04 22:55:17 | classical_training | INFO | === Classical Training Session Started ===
+2026-05-04 22:55:17 | classical_training | INFO | Data loaded: 142193 rows, 21 features, rain=22.42%
+2026-05-04 22:55:17 | classical_training | INFO | Train/test split: train=(113754, 21), test=(28439, 21)
+2026-05-04 22:55:17 | classical_training | INFO | Model instantiated: logistic_regression (LogisticRegression)
+2026-05-04 22:55:17 | classical_training | INFO | Model instantiated: decision_tree (DecisionTreeClassifier)
+2026-05-04 22:55:17 | classical_training | INFO | Model instantiated: random_forest (RandomForestClassifier)
+2026-05-04 22:55:17 | classical_training | INFO | Model instantiated: xgboost (XGBClassifier)
+2026-05-04 22:55:20 | classical_training | INFO | [CV] logistic_regression cross-validation results:
+2026-05-04 22:55:20 | classical_training | INFO |   roc_auc: 0.8543 ± 0.0041
+2026-05-04 22:55:20 | classical_training | INFO |   f1: 0.6063 ± 0.0053
+2026-05-04 22:55:20 | classical_training | INFO |   accuracy: 0.7804 ± 0.0028
+2026-05-04 22:55:20 | classical_training | INFO |   precision: 0.5068 ± 0.0042
+2026-05-04 22:55:20 | classical_training | INFO |   recall: 0.7544 ± 0.0078
+2026-05-04 22:55:22 | classical_training | INFO | [CV] decision_tree cross-validation results:
+2026-05-04 22:55:22 | classical_training | INFO |   roc_auc: 0.8479 ± 0.0039
+2026-05-04 22:55:22 | classical_training | INFO |   f1: 0.6036 ± 0.0043
+2026-05-04 22:55:22 | classical_training | INFO |   accuracy: 0.7829 ± 0.0045
+2026-05-04 22:55:22 | classical_training | INFO |   precision: 0.5110 ± 0.0071
+2026-05-04 22:55:22 | classical_training | INFO |   recall: 0.7372 ± 0.0062
+2026-05-04 22:55:48 | classical_training | INFO | [CV] random_forest cross-validation results:
+2026-05-04 22:55:48 | classical_training | INFO |   roc_auc: 0.8764 ± 0.0033
+2026-05-04 22:55:48 | classical_training | INFO |   f1: 0.6419 ± 0.0036
+2026-05-04 22:55:48 | classical_training | INFO |   accuracy: 0.8169 ± 0.0023
+2026-05-04 22:55:48 | classical_training | INFO |   precision: 0.5715 ± 0.0044
+2026-05-04 22:55:48 | classical_training | INFO |   recall: 0.7321 ± 0.0045
+2026-05-04 22:55:53 | classical_training | INFO | [CV] xgboost cross-validation results:
+2026-05-04 22:55:53 | classical_training | INFO |   roc_auc: 0.8849 ± 0.0028
+2026-05-04 22:55:53 | classical_training | INFO |   f1: 0.6504 ± 0.0026
+2026-05-04 22:55:53 | classical_training | INFO |   accuracy: 0.8132 ± 0.0015
+2026-05-04 22:55:53 | classical_training | INFO |   precision: 0.5603 ± 0.0026
+2026-05-04 22:55:53 | classical_training | INFO |   recall: 0.7749 ± 0.0050
+2026-05-04 22:55:53 | classical_training | INFO | Training logistic_regression...
+2026-05-04 22:55:53 | classical_training | INFO | [EVALUATION] logistic_regression metrics:
+2026-05-04 22:55:53 | classical_training | INFO |   accuracy: 0.7855
+2026-05-04 22:55:53 | classical_training | INFO |   roc_auc: 0.8588
+2026-05-04 22:55:53 | classical_training | INFO |   f1_score: 0.6123
+2026-05-04 22:55:53 | classical_training | INFO |   precision: 0.5147
+2026-05-04 22:55:53 | classical_training | INFO |   recall: 0.7556
+2026-05-04 22:55:53 | classical_training | INFO |   confusion_matrix: [[17522, 4542], [1558, 4817]]
+2026-05-04 22:55:53 | classical_training | INFO | [SAVE] logistic_regression → saved_models/logistic_regression.joblib
+2026-05-04 22:55:53 | classical_training | INFO | Training decision_tree...
+2026-05-04 22:55:54 | classical_training | INFO | [EVALUATION] decision_tree metrics:
+2026-05-04 22:55:54 | classical_training | INFO |   accuracy: 0.7938
+2026-05-04 22:55:54 | classical_training | INFO |   roc_auc: 0.8526
+2026-05-04 22:55:54 | classical_training | INFO |   f1_score: 0.6132
+2026-05-04 22:55:54 | classical_training | INFO |   precision: 0.5291
+2026-05-04 22:55:54 | classical_training | INFO |   recall: 0.7291
+2026-05-04 22:55:54 | classical_training | INFO |   confusion_matrix: [[17928, 4136], [1727, 4648]]
+2026-05-04 22:55:54 | classical_training | INFO | [SAVE] decision_tree → saved_models/decision_tree.joblib
+2026-05-04 22:55:54 | classical_training | INFO | Training random_forest...
+2026-05-04 22:55:59 | classical_training | INFO | [EVALUATION] random_forest metrics:
+2026-05-04 22:55:59 | classical_training | INFO |   accuracy: 0.8232
+2026-05-04 22:55:59 | classical_training | INFO |   roc_auc: 0.8816
+2026-05-04 22:55:59 | classical_training | INFO |   f1_score: 0.6509
+2026-05-04 22:55:59 | classical_training | INFO |   precision: 0.5840
+2026-05-04 22:55:59 | classical_training | INFO |   recall: 0.7352
+2026-05-04 22:55:59 | classical_training | INFO |   confusion_matrix: [[18725, 3339], [1688, 4687]]
+2026-05-04 22:55:59 | classical_training | INFO | [SAVE] random_forest → saved_models/random_forest.joblib
+2026-05-04 22:55:59 | classical_training | INFO | Training xgboost...
+2026-05-04 22:56:00 | classical_training | INFO | [EVALUATION] xgboost metrics:
+2026-05-04 22:56:00 | classical_training | INFO |   accuracy: 0.8174
+2026-05-04 22:56:00 | classical_training | INFO |   roc_auc: 0.8893
+2026-05-04 22:56:00 | classical_training | INFO |   f1_score: 0.6569
+2026-05-04 22:56:00 | classical_training | INFO |   precision: 0.5674
+2026-05-04 22:56:00 | classical_training | INFO |   recall: 0.7799
+2026-05-04 22:56:00 | classical_training | INFO |   confusion_matrix: [[18273, 3791], [1403, 4972]]
+2026-05-04 22:56:00 | classical_training | INFO | [SAVE] xgboost → saved_models/xgboost.joblib
+2026-05-04 22:56:02 | classical_training | INFO | Temp regressor data: train=(113754, 20), test=(28439, 20)
+2026-05-04 22:56:02 | classical_training | INFO | Fitting temperature regressor...
+2026-05-04 22:56:53 | classical_training | INFO | [EVALUATION] temp_regressor metrics:
+2026-05-04 22:56:53 | classical_training | INFO |   mae: 0.4420
+2026-05-04 22:56:53 | classical_training | INFO |   r2: 0.9925
+2026-05-04 22:56:53 | classical_training | INFO | [SAVE] temp_regressor → saved_models/temp_regressor.joblib
