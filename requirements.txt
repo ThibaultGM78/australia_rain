@@ -27,6 +27,7 @@ packaging==26.2
 pandas==2.3.3
 parso==0.8.6
 pexpect==4.9.0
+plotly>=5.18.0
 pillow==12.2.0
 platformdirs==4.9.6
 prompt_toolkit==3.0.52
@@ -53,4 +54,6 @@ traitlets==5.14.3
 typing_extensions==4.15.0
 tzdata==2026.2
 urllib3==2.6.3
+streamlit>=1.32.0
+xgboost>=2.0.0
 wcwidth==0.6.0
