@@ -152,7 +152,7 @@ def run_grid_search(pipeline, param_grid, X_train, y_train,
     )
     print(f"  ⏳ GridSearchCV fitting ({len(gs.get_params()['param_grid'] or param_grid)} param combos × {cv.get_n_splits()} folds)...")
     gs.fit(X_train, y_train)
-    print(f"  ✅ GridSearchCV done — best score: {gs.best_score_:.4f}")
+    print(f"  GridSearchCV done — best score: {gs.best_score_:.4f}")
     return gs
 
 
@@ -183,7 +183,7 @@ def run_random_search(pipeline, param_distributions, X_train, y_train,
     )
     print(f"  ⏳ RandomizedSearchCV fitting ({n_iter} iterations × {cv.get_n_splits()} folds)...")
     rs.fit(X_train, y_train)
-    print(f"  ✅ RandomizedSearchCV done — best score: {rs.best_score_:.4f}")
+    print(f"  RandomizedSearchCV done — best score: {rs.best_score_:.4f}")
     return rs
 
 
@@ -372,7 +372,7 @@ def plot_learning_curves(pipeline, X_train, y_train, cv=None,
         random_state=42,
         verbose=1,
     )
-    print("  ✅ Learning curve computed.")
+    print("  Learning curve computed.")
 
     train_mean = train_scores.mean(axis=1)
     train_std = train_scores.std(axis=1)
