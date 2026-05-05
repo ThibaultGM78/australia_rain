@@ -25,9 +25,11 @@ Vous pouvez lancer l'entraînement via les notebooks ou les scripts Python
 - classical_finetuning.py  Optimisation des modèles existants.
 - hyperparameter_tuning.py  Recherche des meilleurs paramètres.
 
+### 3 Interpretabilite
+-interpretabilite.py nous permet de vois l'importance de chaque variable et de pouvoir interpréter les résultats du modèle.
 ### 3. Application et Prédiction
 - extract_prediction_classical.ipynb  Script d'extraction des résultats de prédiction.
-- # Australian Rain Prediction Dashboard
+### Australian Rain Prediction Dashboard
 Application Streamlit pour visualiser et explorer les prédictions de pluie en Australie.
 
 ## 🚀 Lancement
