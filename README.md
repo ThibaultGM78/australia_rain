@@ -68,7 +68,7 @@ ton_projet/
 ├── saved_models/
 │   ├── xgboost.joblib
 │   └── logistic_regression.joblib
-└── data/               # (optionnel)
+└── data/               
     └── predictions.csv
 ```
 
