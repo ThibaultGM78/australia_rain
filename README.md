@@ -1,250 +1,250 @@
-# Rain in Australia — Prediction Project
+# Pluie en Australie — Projet de Prédiction
 
-Predicting **whether it will rain tomorrow** (`RainTomorrow`) and **maximum temperature** (`MaxTemp`) using daily meteorological observations from ~49 Australian weather stations.
+Prédiction de **s'il pleuvra demain** (`RainTomorrow`) et de la **température maximale** (`MaxTemp`) à partir d'observations météorologiques quotidiennes provenant de ~49 stations australiennes.
 
-This project implements both **deep learning** (PyTorch CNN/LSTM) and **classical machine learning** (scikit-learn, XGBoost) pipelines, with rigorous evaluation, hyperparameter tuning, probability calibration, and structured logging. It also includes an interactive **Streamlit dashboard** for visualising and exploring predictions in real time.
+Ce projet implémente des pipelines de **deep learning** (PyTorch CNN/LSTM) et de **machine learning classique** (scikit-learn, XGBoost), avec une évaluation rigoureuse, un réglage des hyperparamètres, une calibration des probabilités et une journalisation structurée. Il inclut également un **dashboard Streamlit** interactif pour visualiser et explorer les prédictions en temps réel.
 
 ---
 
-## Table of Contents
+## Table des Matières
 
 - [Dataset](#dataset)
-- [Project Structure](#project-structure)
-- [Setup & Installation](#setup--installation)
-- [Pipeline Overview](#pipeline-overview)
-- [Models](#models)
-- [Key Results](#key-results)
+- [Structure du Projet](#structure-du-projet)
+- [Installation](#installation)
+- [Vue d'Ensemble du Pipeline](#vue-densemble-du-pipeline)
+- [Modèles](#modèles)
+- [Résultats Clés](#résultats-clés)
 - [Notebooks](#notebooks)
 - [Modules](#modules)
-- [Logging](#logging)
+- [Journalisation](#journalisation)
 - [Dashboard](#dashboard)
-- [Contributors](#contributors)
+- [Contributeurs](#contributeurs)
 
 ---
 
 ## Dataset
 
-**Source:** [Kaggle — Weather Dataset (Rattle Package)](https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package)
+**Source :** [Kaggle — Weather Dataset (Rattle Package)](https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package)
 
-| Property | Value |
-|----------|-------|
-| Rows | 145,460 |
-| Columns | 23 (raw) |
-| Stations | 49 Australian cities |
-| Period | 2007–2017 |
-| Target (classification) | `RainTomorrow` (binary) |
-| Target (regression) | `MaxTemp` (°C) |
-| Class imbalance | ~78% No / ~22% Yes |
+| Propriété | Valeur |
+|-----------|--------|
+| Lignes | 145 460 |
+| Colonnes | 23 (brutes) |
+| Stations | 49 villes australiennes |
+| Période | 2007–2017 |
+| Cible (classification) | `RainTomorrow` (binaire) |
+| Cible (régression) | `MaxTemp` (°C) |
+| Déséquilibre des classes | ~78% Non / ~22% Oui |
 
 ---
 
-## Project Structure
+## Structure du Projet
 
 ```
 australia_rain/
 ├── data/
-│   ├── weatherAUS.csv                  # Raw Kaggle dataset (~14 MB)
-│   └── clean_data.csv                  # Cleaned dataset for DL pipeline
-├── artifacts/                          # EDA visualisations (PNG)
-├── predict/                            # Prediction output CSVs
-├── saved_models/                       # Serialised ML models (.joblib)
+│   ├── weatherAUS.csv                  # Dataset brut Kaggle (~14 Mo)
+│   └── clean_data.csv                  # Dataset nettoyé pour le pipeline DL
+├── artifacts/                          # Visualisations EDA (PNG)
+├── predict/                            # CSV de sorties de prédiction
+├── saved_models/                       # Modèles ML sérialisés (.joblib)
 │   ├── xgboost.joblib
 │   └── logistic_regression.joblib
-├── logs/                               # Training & fine-tuning logs (CSV + log files)
-├── exploration_dl/                     # Deep Learning exploration & tests
+├── logs/                               # Logs d'entraînement et de fine-tuning (CSV + fichiers log)
+├── exploration_dl/                     # Exploration et tests Deep Learning
 │
-├── app.py                              # Streamlit dashboard application
-├── requirements.txt                    # Python dependencies
-├── model.py                            # PyTorch model definitions (CNN, LSTM)
-├── classical_models.py                 # Classical ML pipelines & evaluation
+├── app.py                              # Application Streamlit
+├── requirements.txt                    # Dépendances Python
+├── model.py                            # Définitions des modèles PyTorch (CNN, LSTM)
+├── classical_models.py                 # Pipelines ML classiques & évaluation
 ├── hyperparameter_tuning.py            # GridSearch, RandomSearch, Optuna, calibration
-├── training_logger.py                  # Structured logging (file + console + CSV)
-├── interpretabilite.py                 # Feature importance & model interpretability
+├── training_logger.py                  # Journalisation structurée (fichier + console + CSV)
+├── interpretabilite.py                 # Importance des variables & interprétabilité
 │
-├── data_explo_and_prep.ipynb           # Data cleaning & basic feature engineering
-├── rain_australia_analysis.ipynb       # Comprehensive EDA & advanced feature engineering
-├── training.ipynb                      # DL model training (CNN/LSTM)
-├── classical_training.ipynb            # Classical ML training & evaluation
-├── classical_finetuning.ipynb          # Hyperparameter tuning & calibration
-├── exrtact_prediction.ipynb            # DL inference & evaluation
-├── extract_prediction_classical.ipynb  # Classical ML inference (supports per-location)
+├── data_explo_and_prep.ipynb           # Nettoyage des données & feature engineering de base
+├── rain_australia_analysis.ipynb       # EDA complète & feature engineering avancé
+├── training.ipynb                      # Entraînement des modèles DL (CNN/LSTM)
+├── classical_training.ipynb            # Entraînement ML classique & évaluation
+├── classical_finetuning.ipynb          # Réglage des hyperparamètres & calibration
+├── exrtact_prediction.ipynb            # Inférence & évaluation DL
+├── extract_prediction_classical.ipynb  # Inférence ML classique (supporte le filtrage par ville)
 │
-├── weatherAUS_clean_features.csv       # Feature-engineered dataset with Location column
-├── weather_model.pth                   # Saved DL model checkpoint
-├── ARCHITECTURE.md                     # Detailed architecture documentation
-├── CHANGELOG.md                        # Version history
-├── PROGRESS.md                         # Progress tracking vs cahier de charge
-└── README.md                           # This file
+├── weatherAUS_clean_features.csv       # Dataset avec features engineerées et colonne Location
+├── weather_model.pth                   # Checkpoint du modèle DL sauvegardé
+├── ARCHITECTURE.md                     # Documentation détaillée de l'architecture
+├── CHANGELOG.md                        # Historique des versions
+├── PROGRESS.md                         # Suivi de l'avancement vs cahier des charges
+└── README.md                           # Ce fichier
 ```
 
 ---
 
-## Setup & Installation
+## Installation
 
-### Prerequisites
+### Prérequis
 - Python 3.10+
 - pip
 
-### Install dependencies
+### Installer les dépendances
 ```bash
 pip install -r requirements.txt
 ```
 
-Or manually:
+Ou manuellement :
 ```bash
 pip install pandas numpy scikit-learn xgboost matplotlib seaborn joblib optuna tqdm torch kagglehub streamlit
 ```
 
-### Quick start
-1. **Feature engineering:** Run `rain_australia_analysis.ipynb` to generate `weatherAUS_clean_features.csv`
-2. **Train models:** Run `classical_training.ipynb` to train and save all 4 classical models + temperature regressor
-3. **Fine-tune (optional):** Run `classical_finetuning.ipynb` for hyperparameter tuning and calibration
-4. **Predict:** Run `extract_prediction_classical.ipynb` for predictions (all cities or specific location)
-5. **Dashboard:** Launch the Streamlit app (see [Dashboard](#dashboard))
+### Démarrage rapide
+1. **Feature engineering :** Lancer `rain_australia_analysis.ipynb` pour générer `weatherAUS_clean_features.csv`
+2. **Entraînement :** Lancer `classical_training.ipynb` pour entraîner les 4 modèles classiques + le régresseur de température
+3. **Fine-tuning (optionnel) :** Lancer `classical_finetuning.ipynb` pour le réglage des hyperparamètres et la calibration
+4. **Prédiction :** Lancer `extract_prediction_classical.ipynb` pour les prédictions (toutes les villes ou une ville spécifique)
+5. **Dashboard :** Lancer l'application Streamlit (voir [Dashboard](#dashboard))
 
 ---
 
-## Pipeline Overview
+## Vue d'Ensemble du Pipeline
 
 ```
-Raw Data → EDA & Feature Engineering → Clean Dataset → Training → Fine-Tuning → Inference
-                                           ↓                          ↓
-                                      Logs (CSV)              Saved Models (.joblib)
-                                                                      ↓
-                                                           Streamlit Dashboard
+Données Brutes → EDA & Feature Engineering → Dataset Propre → Entraînement → Fine-Tuning → Inférence
+                                                    ↓                              ↓
+                                               Logs (CSV)               Modèles Sauvegardés (.joblib)
+                                                                                   ↓
+                                                                        Dashboard Streamlit
 ```
 
-### 1. Data Exploration & Feature Engineering
-- **`data_explo_and_prep.ipynb`**: Basic cleaning (median/mode imputation), `City_Encoded`, cyclical encoding
-- **`rain_australia_analysis.ipynb`**: Advanced EDA with 7 publication-quality visualisations, KNNImputer, 70+ engineered features including lag/rolling, temperature interactions, target encoding (`Location_rainrate`), and **preserves the `Location` column** for downstream filtering
+### 1. Exploration & Feature Engineering
+- **`data_explo_and_prep.ipynb`** : Nettoyage de base (imputation médiane/mode), `City_Encoded`, encodage cyclique
+- **`rain_australia_analysis.ipynb`** : EDA avancée avec 7 visualisations de qualité publication, KNNImputer, 70+ features engineerées (lag/rolling, interactions de température, target encoding `Location_rainrate`), et **conservation de la colonne `Location`** pour le filtrage en aval
 
-### 2. Model Training
-- **`classical_training.ipynb`**: Trains 4 classifiers (Logistic Regression, Decision Tree, Random Forest, XGBoost) + 1 temperature regressor (GradientBoosting) with 5-fold stratified cross-validation
-- **`training.ipynb`**: DL training with WeatherCNN (7-day sequence windows)
+### 2. Entraînement des Modèles
+- **`classical_training.ipynb`** : Entraîne 4 classifieurs (Régression Logistique, Arbre de Décision, Random Forest, XGBoost) + 1 régresseur de température (GradientBoosting) avec validation croisée stratifiée en 5 folds
+- **`training.ipynb`** : Entraînement DL avec WeatherCNN (fenêtres de séquences de 7 jours)
 
-### 3. Hyperparameter Tuning & Calibration
-- **`classical_finetuning.ipynb`**: GridSearchCV, RandomizedSearchCV, Optuna Bayesian optimisation, probability calibration (isotonic), learning curves
+### 3. Réglage des Hyperparamètres & Calibration
+- **`classical_finetuning.ipynb`** : GridSearchCV, RandomizedSearchCV, optimisation bayésienne Optuna, calibration des probabilités (isotonique), courbes d'apprentissage
 
-### 4. Interpretability
-- **`interpretabilite.py`**: Feature importance visualisation and model result interpretation
+### 4. Interprétabilité
+- **`interpretabilite.py`** : Visualisation de l'importance des variables et interprétation des résultats des modèles
 
-### 5. Inference & Evaluation
-- **`extract_prediction_classical.ipynb`**: Location-aware predictions — predict for all cities or a specific location (e.g., `location="Sydney"`)
-- **`exrtact_prediction.ipynb`**: DL inference with per-city prediction
-
----
-
-## Models
-
-### Classical ML Models (in `classical_models.py`)
-
-| Model | Description | Key Hyperparameters |
-|-------|-------------|---------------------|
-| **Logistic Regression** | L2-regularised, class-weight balanced | `C=1.0`, `solver=lbfgs` |
-| **Decision Tree** | Depth-constrained, balanced | `max_depth=10`, `min_samples_leaf=50` |
-| **Random Forest** | 200 estimators, balanced | `max_depth=15`, `min_samples_leaf=20` |
-| **XGBoost** | Gradient boosting with `scale_pos_weight` for imbalance | `n_estimators=200`, `lr=0.05` |
-| **Temperature Regressor** | GradientBoostingRegressor for MaxTemp | `n_estimators=200`, `lr=0.05` |
-
-### Deep Learning Models (in `model.py`)
-
-| Model | Architecture | Input |
-|-------|-------------|-------|
-| **WeatherCNN** | 1D Conv → BatchNorm → ReLU → Dropout → FC | 7-day sequences |
-| **WeatherLSTM** | LSTM → Dropout → FC | 7-day sequences |
-
-### Feature Encoding: Location
-
-The `Location` column uses **target encoding** (`Location_rainrate`) — the rain rate per city — as the numeric feature for models. The raw `Location` string is preserved in the dataset for filtering and display purposes.
+### 5. Inférence & Évaluation
+- **`extract_prediction_classical.ipynb`** : Prédictions par localisation — prédit pour toutes les villes ou une ville spécifique (ex. `location="Sydney"`)
+- **`exrtact_prediction.ipynb`** : Inférence DL avec prédiction par ville
 
 ---
 
-## Key Results
+## Modèles
 
-### Cross-Validation (5-fold Stratified)
+### Modèles ML Classiques (dans `classical_models.py`)
 
-| Model | ROC-AUC | F1 | Accuracy |
-|-------|---------|-----|----------|
+| Modèle | Description | Hyperparamètres Clés |
+|--------|-------------|----------------------|
+| **Régression Logistique** | Régularisation L2, poids de classe équilibrés | `C=1.0`, `solver=lbfgs` |
+| **Arbre de Décision** | Profondeur contrainte, équilibré | `max_depth=10`, `min_samples_leaf=50` |
+| **Random Forest** | 200 estimateurs, équilibré | `max_depth=15`, `min_samples_leaf=20` |
+| **XGBoost** | Gradient boosting avec `scale_pos_weight` pour le déséquilibre | `n_estimators=200`, `lr=0.05` |
+| **Régresseur de Température** | GradientBoostingRegressor pour MaxTemp | `n_estimators=200`, `lr=0.05` |
+
+### Modèles Deep Learning (dans `model.py`)
+
+| Modèle | Architecture | Entrée |
+|--------|-------------|--------|
+| **WeatherCNN** | Conv1D → BatchNorm → ReLU → Dropout → FC | Séquences de 7 jours |
+| **WeatherLSTM** | LSTM → Dropout → FC | Séquences de 7 jours |
+
+### Encodage de la Localisation
+
+La colonne `Location` utilise un **target encoding** (`Location_rainrate`) — le taux de pluie par ville — comme feature numérique pour les modèles. La chaîne brute `Location` est conservée dans le dataset à des fins de filtrage et d'affichage.
+
+---
+
+## Résultats Clés
+
+### Validation Croisée (5 folds Stratifiés)
+
+| Modèle | ROC-AUC | F1 | Accuracy |
+|--------|---------|-----|----------|
 | XGBoost | 0.8801 ± 0.0025 | 0.6404 ± 0.0042 | 0.8111 ± 0.0019 |
 | Random Forest | 0.8732 ± 0.0020 | 0.6345 ± 0.0026 | 0.8158 ± 0.0008 |
-| Logistic Regression | 0.8511 ± 0.0026 | 0.5968 ± 0.0034 | 0.7783 ± 0.0013 |
-| Decision Tree | 0.8440 ± 0.0015 | 0.5906 ± 0.0008 | 0.7733 ± 0.0030 |
+| Régression Logistique | 0.8511 ± 0.0026 | 0.5968 ± 0.0034 | 0.7783 ± 0.0013 |
+| Arbre de Décision | 0.8440 ± 0.0015 | 0.5906 ± 0.0008 | 0.7733 ± 0.0030 |
 
-> **Note:** These results are from the previous data source (`clean_data.csv`). Results may differ with the updated `weatherAUS_clean_features.csv` which has 70+ features.
+> **Note :** Ces résultats proviennent de l'ancienne source de données (`clean_data.csv`). Les résultats peuvent différer avec `weatherAUS_clean_features.csv` qui contient 70+ features.
 
 ---
 
 ## Notebooks
 
-| Notebook | Purpose |
+| Notebook | Objectif |
 |----------|---------|
 | `rain_australia_analysis.ipynb` | EDA, visualisation, feature engineering → `weatherAUS_clean_features.csv` |
-| `data_explo_and_prep.ipynb` | Basic data cleaning → `data/clean_data.csv` |
-| `classical_training.ipynb` | Train 4 classifiers + temp regressor, with CV and logging |
-| `classical_finetuning.ipynb` | GridSearch, RandomSearch, Optuna, calibration, learning curves |
-| `extract_prediction_classical.ipynb` | Classical ML inference — supports per-location predictions |
-| `training.ipynb` | DL model training (CNN/LSTM) |
-| `exrtact_prediction.ipynb` | DL inference & evaluation |
+| `data_explo_and_prep.ipynb` | Nettoyage de base → `data/clean_data.csv` |
+| `classical_training.ipynb` | Entraînement des 4 classifieurs + régresseur de température, avec CV et journalisation |
+| `classical_finetuning.ipynb` | GridSearch, RandomSearch, Optuna, calibration, courbes d'apprentissage |
+| `extract_prediction_classical.ipynb` | Inférence ML classique — supporte les prédictions par localisation |
+| `training.ipynb` | Entraînement des modèles DL (CNN/LSTM) |
+| `exrtact_prediction.ipynb` | Inférence & évaluation DL |
 
 ---
 
 ## Modules
 
-| Module | Purpose |
+| Module | Objectif |
 |--------|---------|
-| `classical_models.py` | Model pipelines, preprocessor, evaluation, constants (`FEATURE_COLUMNS`, `TARGET_RAIN`, `LOCATION_COLUMN`, `DATA_PATH`) |
-| `hyperparameter_tuning.py` | GridSearchCV, RandomizedSearchCV, Optuna, calibration, learning curves |
-| `training_logger.py` | Structured logging with CSV persistence |
-| `model.py` | PyTorch DL model architectures |
-| `interpretabilite.py` | Feature importance & model interpretability |
+| `classical_models.py` | Pipelines de modèles, préprocesseur, évaluation, constantes (`FEATURE_COLUMNS`, `TARGET_RAIN`, `LOCATION_COLUMN`, `DATA_PATH`) |
+| `hyperparameter_tuning.py` | GridSearchCV, RandomizedSearchCV, Optuna, calibration, courbes d'apprentissage |
+| `training_logger.py` | Journalisation structurée avec persistance CSV |
+| `model.py` | Architectures des modèles DL PyTorch |
+| `interpretabilite.py` | Importance des variables & interprétabilité des modèles |
 
 ---
 
-## Logging
+## Journalisation
 
-Training and fine-tuning produce structured logs in the `logs/` directory:
+L'entraînement et le fine-tuning produisent des logs structurés dans le répertoire `logs/` :
 
-| File | Content |
-|------|---------|
-| `classical_training.log` | Human-readable training session logs |
-| `classical_finetuning.log` | Human-readable fine-tuning session logs |
-| `training_metrics.csv` | Per-model evaluation metrics (accuracy, ROC-AUC, F1, precision, recall) |
-| `cv_results.csv` | Cross-validation results (mean ± std for each metric) |
-| `tuning_results.csv` | Best hyperparameters and scores per tuning method |
-| `calibration_results.csv` | Raw vs calibrated model comparison |
+| Fichier | Contenu |
+|---------|---------|
+| `classical_training.log` | Logs lisibles de la session d'entraînement |
+| `classical_finetuning.log` | Logs lisibles de la session de fine-tuning |
+| `training_metrics.csv` | Métriques d'évaluation par modèle (accuracy, ROC-AUC, F1, précision, rappel) |
+| `cv_results.csv` | Résultats de validation croisée (moyenne ± écart-type par métrique) |
+| `tuning_results.csv` | Meilleurs hyperparamètres et scores par méthode de tuning |
+| `calibration_results.csv` | Comparaison modèle brut vs modèle calibré |
 
 ---
 
 ## Dashboard
 
-An interactive **Streamlit dashboard** (`app.py`) lets you visualise and explore rain predictions across Australia.
+Un **dashboard Streamlit** interactif (`app.py`) permet de visualiser et d'explorer les prédictions de pluie à travers l'Australie.
 
-### Launch
+### Lancement
 
 ```bash
-# Install dependencies
+# Installer les dépendances
 pip install -r requirements.txt
 
-# Run the app
+# Lancer l'application
 streamlit run app.py
 ```
 
-The app opens automatically at **http://localhost:8504/**.
+L'application s'ouvre automatiquement sur **http://localhost:8504/**.
 
-### Features
+### Fonctionnalités
 
-| Feature | Description |
-|---------|-------------|
-| 🤖 Model switcher | Toggle between XGBoost and Logistic Regression in real time |
-| 🎚️ Weather sliders | 16 adjustable parameters grouped by category (temperature, humidity, wind, pressure…) |
-| 🗺️ Interactive map | Rain probability per city, colour-coded by intensity |
-| 🌪️ Tornado chart | Sensitivity of each feature (±1σ) on P(rain) |
-| 📋 Filterable table | Sort, search, and filter by rain/dry forecast |
-| ↩️ Reset | Restore all sliders to Australian median values |
+| Fonctionnalité | Description |
+|----------------|-------------|
+| 🤖 Changement de modèle | Bascule entre XGBoost et Régression Logistique en temps réel |
+| 🎚️ Sliders météo | 16 paramètres ajustables groupés par catégorie (température, humidité, vent, pression…) |
+| 🗺️ Carte interactive | Probabilité de pluie par ville, colorée par intensité |
+| 🌪️ Tornado chart | Sensibilité de chaque feature (±1σ) sur P(pluie) |
+| 📋 Tableau filtrable | Tri, recherche et filtre pluie/sec |
+| ↩️ Réinitialisation | Remet tous les sliders aux valeurs médianes australiennes |
 
 ---
 
-## Contributors
+## Contributeurs
 
 - **Thibault GM**
 - **LIMAMMohamedlimam**
